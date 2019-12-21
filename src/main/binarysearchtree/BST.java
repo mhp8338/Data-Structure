@@ -93,7 +93,7 @@ public class BST<E extends Comparable<E>> {
          */
         if (e.compareTo(node.e) > 0) {
             node.right = add(node.right, e);
-        } else {
+        } else if (e.compareTo(node.e) < 0) {
             node.left = add(node.left, e);
         }
         return node;
@@ -339,21 +339,21 @@ public class BST<E extends Comparable<E>> {
         if (e.compareTo(node.e) > 0) {
             node.right = remove(node.right, e);
             return node;
-        } else if (e.compareTo(node.e) < 0){
-            node.left = remove(node.left,e);
+        } else if (e.compareTo(node.e) < 0) {
+            node.left = remove(node.left, e);
             return node;
-        }else {
-            if(node.left == null){
+        } else {
+            if (node.left == null) {
                 Node rightNode = node.right;
                 node.right = null;
-                size --;
+                size--;
                 return rightNode;
             }
 
-            if(node.right == null){
+            if (node.right == null) {
                 Node leftNode = node.left;
                 node.left = null;
-                size --;
+                size--;
                 return leftNode;
             }
 
