@@ -36,11 +36,4 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
     public E dequeue() {
         return maxHeap.extractMax();
     }
-
-    public static void main(String[] args) {
-        Map map = new HashMap<>();
-        java.util.PriorityQueue priorityQueue = new java.util.PriorityQueue();
-        List<Integer> l = new LinkedList<>();
-
-    }
 }
