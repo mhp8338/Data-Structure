@@ -1,5 +1,7 @@
 package avltree;
 
+import java.util.ArrayList;
+
 /**
  * 基于AVL的map
  *
@@ -43,10 +45,45 @@ public class AVLTree<K extends Comparable<K>, V> {
         return size == 0;
     }
 
-    // 向二分搜索树中添加新的元素(key, value)
-    public void add(K key, V value) {
-        root = add(root, key, value);
+    public boolean isBST() {
+        ArrayList<K> keys = new ArrayList<>();
+        /*中序遍历，并将元素存于arr*/
+        inOrder(root, keys);
+
+        for (int i = 1; i < keys.size(); i++) {
+            if (keys.get(i - 1).compareTo(keys.get(i)) > 0) {
+                return false;
+            }
+        }
+        return true;
     }
+
+    private void inOrder(Node node, ArrayList<K> arr) {
+        if (node == null) {
+            return;
+        }
+
+        inOrder(node.left, arr);
+        arr.add(node.key);
+        inOrder(node.right, arr);
+    }
+
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node node) {
+        if (node == null) {
+            return true;
+        }
+        int balanceFactor = getBalanceFactor(node);
+        if (Math.abs(balanceFactor) > 1) {
+            return false;
+        }
+
+        return isBalanced(node.left) && isBalanced(node.right);
+    }
+
 
     /**
      * 封装height，解决node==null的问题
@@ -71,7 +108,13 @@ public class AVLTree<K extends Comparable<K>, V> {
         if (node == null) {
             return 0;
         }
-        return Math.abs(getHeight(node.left) - getHeight(node.right));
+        return getHeight(node.left) - getHeight(node.right);
+    }
+
+
+    // 向二分搜索树中添加新的元素(key, value)
+    public void add(K key, V value) {
+        root = add(root, key, value);
     }
 
     /**
@@ -98,10 +141,85 @@ public class AVLTree<K extends Comparable<K>, V> {
         node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
 
         int balanceFactor = getBalanceFactor(node);
-        if (balanceFactor > 1) {
-            System.out.println("unbalanced: " + balanceFactor);
+
+        /*平衡维护*/
+        /*LL*/
+        if (balanceFactor > 1 && getBalanceFactor(node.left) >= 0) {
+            /*右旋*/
+            return rightRotate(node);
+        }
+        /*RR*/
+        if (balanceFactor < -1 && getBalanceFactor(node.right) <= 0) {
+            /*左旋*/
+            return leftRotate(node);
+        }
+        /*LR*/
+        if (balanceFactor > 1 && getBalanceFactor(node.left) < 0) {
+            /* LR => LL */
+            node.left = leftRotate(node.left);
+            return rightRotate(node);
+        }
+        /*RL*/
+        if (balanceFactor < -1 && getBalanceFactor(node.right) > 0) {
+            /* RL => RR */
+            node.right = rightRotate(node.right);
+            return leftRotate(node);
         }
         return node;
+    }
+
+    //
+    //    对节点y进行向右旋转操作，返回旋转后新的根节点x
+    //           y                              x
+    //          / \                           /   \
+    //         x   T4     向右旋转 (y)        z     y
+    //        / \       - - - - - - - ->    / \   / \
+    //       z   T3                       T1  T2 T3 T4
+    //      / \
+    //    T1   T2
+    //
+    private Node rightRotate(Node y) {
+        Node x = y.left;
+        Node T3 = x.right;
+
+        /*右旋*/
+        x.right = y;
+        y.left = T3;
+
+        /*
+        维护x,y高度
+        先维护y，再维护x
+        */
+        y.height = 1 + Math.max(getHeight(y.left), getHeight(y.right));
+        x.height = 1 + Math.max(getHeight(x.left), getHeight(x.right));
+
+        return x;
+
+    }
+
+    //
+    // 对节点y进行向左旋转操作，返回旋转后新的根节点x
+    //    y                             x
+    //  /  \                          /   \
+    // T1   x      向左旋转 (y)       y     z
+    //     / \   - - - - - - - ->   / \   / \
+    //   T2  z                     T1 T2 T3 T4
+    //      / \
+    //     T3 T4
+    //
+    private Node leftRotate(Node y) {
+        Node x = y.right;
+        Node T2 = x.left;
+
+        /*左旋*/
+        x.left = y;
+        y.right = T2;
+
+        /*维护height*/
+        y.height = 1 + Math.max(getHeight(y.left), getHeight(y.right));
+        x.height = 1 + Math.max(getHeight(x.left), getHeight(x.right));
+        return x;
+
     }
 
     // 返回以node为根节点的二分搜索树中，key所在的节点
