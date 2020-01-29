@@ -26,6 +26,14 @@ public class Main {
             System.out.println("is BST: " + map.isBST());
             System.out.println("is balanced: " + map.isBalanced());
 
+            for(String word:words){
+                map.remove(word);
+                if(!map.isBST() || !map.isBalanced()){
+                    throw new RuntimeException("Error");
+                }
+            }
+
+            System.out.println("end");
         }
     }
 }

@@ -83,7 +83,9 @@ public class SetTest {
         String fileName = "src/main/setandmap/pride-and-prejudice.txt";
         double bstTime = getRunningTime(new BSTSet<String>(), fileName);
         double linkListTime = getRunningTime(new LinkListSet<String>(), fileName);
-        System.out.println("BST set :" + bstTime + "s");
-        System.out.println("LinkList set:" + linkListTime + "s");
+        double avlTime = getRunningTime(new AVLSet<String>(), fileName);
+        System.out.println("BST set : " + bstTime + "s");
+        System.out.println("LinkList set : " + linkListTime + "s");
+        System.out.println("AVL set : " + avlTime + "s");
     }
 }

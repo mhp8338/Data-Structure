@@ -8,17 +8,17 @@ import static org.junit.Assert.*;
 
 public class MapTest {
 
-    private static double getRunningTime(IMap<String,Integer> iMap, String fileName) {
+    private static double getRunningTime(IMap<String, Integer> iMap, String fileName) {
         long startTime = System.nanoTime();
         System.out.println(fileName);
         ArrayList<String> words = new ArrayList<>();
         if (FileOperation.readFile(fileName, words)) {
             System.out.println("Total words:" + words.size());
             for (String word : words) {
-                if(iMap.contains(word)){
-                    iMap.add(word,iMap.get(word)+1);
-                }else {
-                    iMap.add(word,1);
+                if (iMap.contains(word)) {
+                    iMap.add(word, iMap.get(word) + 1);
+                } else {
+                    iMap.add(word, 1);
                 }
             }
             System.out.println("Total different words:" + iMap.getSize());
@@ -26,6 +26,7 @@ public class MapTest {
         long endTime = System.nanoTime();
         return (endTime - startTime) / 1000000000.0;
     }
+
     @Test
     public void bst_map_test() {
         ArrayList<String> words = new ArrayList<>();
@@ -40,10 +41,11 @@ public class MapTest {
                 }
             }
         }
-        System.out.println("Total different words:"+bstMap.getSize());
-        System.out.println("Frequency of Pride:"+bstMap.get("pride"));
-        System.out.println("Frequency of Prejudice:"+bstMap.get("prejudice"));
+        System.out.println("Total different words:" + bstMap.getSize());
+        System.out.println("Frequency of Pride:" + bstMap.get("pride"));
+        System.out.println("Frequency of Prejudice:" + bstMap.get("prejudice"));
     }
+
     @Test
     public void link_list_map_test() {
         ArrayList<String> words = new ArrayList<>();
@@ -58,9 +60,9 @@ public class MapTest {
                 }
             }
         }
-        System.out.println("Total different words:"+linkListMap.getSize());
-        System.out.println("Frequency of Pride:"+linkListMap.get("pride"));
-        System.out.println("Frequency of Prejudice:"+linkListMap.get("prejudice"));
+        System.out.println("Total different words:" + linkListMap.getSize());
+        System.out.println("Frequency of Pride:" + linkListMap.get("pride"));
+        System.out.println("Frequency of Prejudice:" + linkListMap.get("prejudice"));
     }
 
     @Test
@@ -68,8 +70,10 @@ public class MapTest {
         String fileName = "src/main/setandmap/pride-and-prejudice.txt";
         double bstTime = getRunningTime(new BSTMap<String, Integer>(), fileName);
         double linkListTime = getRunningTime(new LinkListMap<String, Integer>(), fileName);
-        System.out.println("BST map :" + bstTime + "s");
-        System.out.println("LinkList map:" + linkListTime + "s");
+        double avlTime = getRunningTime(new AVLMap<String, Integer>(), fileName);
+        System.out.println("BST map : " + bstTime + "s");
+        System.out.println("LinkList map : " + linkListTime + "s");
+        System.out.println("AVL map : " + avlTime);
     }
 
 

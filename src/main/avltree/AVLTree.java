@@ -137,9 +137,16 @@ public class AVLTree<K extends Comparable<K>, V> {
         {
             node.value = value;
         }
+        /*平衡维护*/
+        return maintenanceBalance(node);
 
-        node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+    }
 
+    private Node maintenanceBalance(AVLTree<K, V>.Node node) {
+        /*更新height*/
+        updateHeight(node);
+
+        /*计算平衡因子*/
         int balanceFactor = getBalanceFactor(node);
 
         /*平衡维护*/
@@ -168,6 +175,10 @@ public class AVLTree<K extends Comparable<K>, V> {
         return node;
     }
 
+    private void updateHeight(Node node) {
+        node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+    }
+
     //
     //    对节点y进行向右旋转操作，返回旋转后新的根节点x
     //           y                              x
@@ -190,8 +201,8 @@ public class AVLTree<K extends Comparable<K>, V> {
         维护x,y高度
         先维护y，再维护x
         */
-        y.height = 1 + Math.max(getHeight(y.left), getHeight(y.right));
-        x.height = 1 + Math.max(getHeight(x.left), getHeight(x.right));
+        updateHeight(y);
+        updateHeight(x);
 
         return x;
 
@@ -216,8 +227,8 @@ public class AVLTree<K extends Comparable<K>, V> {
         y.right = T2;
 
         /*维护height*/
-        y.height = 1 + Math.max(getHeight(y.left), getHeight(y.right));
-        x.height = 1 + Math.max(getHeight(x.left), getHeight(x.right));
+        updateHeight(y);
+        updateHeight(x);
         return x;
 
     }
@@ -287,47 +298,55 @@ public class AVLTree<K extends Comparable<K>, V> {
         return null;
     }
 
+    /**
+     * @param node node
+     * @param key key
+     * @return 删除key后的以node为根的结点
+     */
     private Node remove(Node node, K key) {
 
-        if (node == null)
+        if (node == null) {
             return null;
-
+        }
+        Node retNode;
         if (key.compareTo(node.key) < 0) {
             node.left = remove(node.left, key);
-            return node;
+            retNode = node;
         } else if (key.compareTo(node.key) > 0) {
             node.right = remove(node.right, key);
-            return node;
+            retNode = node;
         } else {   // key.compareTo(node.key) == 0
 
-            // 待删除节点左子树为空的情况
             if (node.left == null) {
+                /*待删除节点左子树为空的情况*/
                 Node rightNode = node.right;
                 node.right = null;
                 size--;
-                return rightNode;
-            }
-
-            // 待删除节点右子树为空的情况
-            if (node.right == null) {
+                retNode = rightNode;
+            } else if (node.right == null) {
+                /*待删除节点右子树为空的情况*/
                 Node leftNode = node.left;
                 node.left = null;
                 size--;
-                return leftNode;
+                retNode = leftNode;
+            }else {
+
+                /*
+                 待删除节点左右子树均不为空的情况
+                 找到比待删除节点大的最小节点, 即待删除节点右子树的最小节点
+                 用这个节点顶替待删除节点的位置
+                 */
+                Node successor = minimum(node.right);
+                successor.right = remove(node.right,successor.key);
+                successor.left = node.left;
+                node.left = node.right = null;
+                retNode =  successor;
             }
-
-            // 待删除节点左右子树均不为空的情况
-
-            // 找到比待删除节点大的最小节点, 即待删除节点右子树的最小节点
-            // 用这个节点顶替待删除节点的位置
-            Node successor = minimum(node.right);
-            successor.right = removeMin(node.right);
-            successor.left = node.left;
-
-            node.left = node.right = null;
-
-            return successor;
         }
+        if(retNode == null){
+            return null;
+        }
+        return maintenanceBalance(retNode);
     }
 
 }
