@@ -52,6 +52,7 @@ public class RBTree<K extends Comparable<K>, V> {
     // 向二分搜索树中添加新的元素(key, value)
     public void add(K key, V value) {
         root = add(root, key, value);
+        root.color = BLACK;
     }
 
     // 向以node为根的二分搜索树中插入元素(key, value)，递归算法
@@ -70,6 +71,18 @@ public class RBTree<K extends Comparable<K>, V> {
         else // key.compareTo(node.key) == 0
             node.value = value;
 
+
+        if(isRed(node.right) && !isRed(node.left)){
+            node = leftRotate(node);
+        }
+
+        if(isRed(node.left) && isRed(node.left.left)){
+            node = rightRotate(node);
+        }
+
+        if(isRed(node.left) && isRed(node.right)){
+            flipColors(node);
+        }
         return node;
     }
 
@@ -78,12 +91,78 @@ public class RBTree<K extends Comparable<K>, V> {
      * @return red
      * 判断null
      */
-    public boolean isRed(Node node) {
+    private boolean isRed(Node node) {
         if (node == null) {
             return BLACK;
         }
         return node.color;
     }
+
+    //   node                     x
+    //  /   \     左旋转         /  \
+    // T1   x   --------->   node   T3
+    //     / \              /   \
+    //    T2 T3            T1   T2
+
+    /**
+     * 左旋转是指根结点围绕右孩子左旋转
+     * @param node node
+     * @return after left rotate node
+     *
+     */
+    private Node leftRotate(Node node){
+        Node x = node.right;
+
+        /*左旋*/
+        node.right = x.left;
+        x.left = node;
+
+        /*根节点的颜色保持一致*/
+        x.color = node.color;
+        /*node与x形成了新的3-节点，所以node需要变为红色*/
+        node.color = RED;
+
+        return x;
+    }
+
+    //     node                   x
+    //    /   \     右旋转       /  \
+    //   x    T2   ------->   y   node
+    //  / \                       /  \
+    // y  T1                     T1  T2
+
+    /**
+     * 围绕左孩子向右旋转
+     * @param node node
+     * @return 右旋后的根结点
+     */
+    private Node rightRotate(Node node){
+        Node x = node.left;
+
+        /*右旋*/
+        node.left = x.right;
+        x.right = node;
+
+        x.color = node.color;
+        /*node x y仍为一个临时的3-节点*/
+        node.color = RED;
+        return x;
+    }
+
+    /**
+     * 颜色翻转
+     * @param node node
+     */
+    private void flipColors(Node node){
+        /*根节点要向上与其父亲节点融合*/
+        node.color = RED;
+
+        /*孩子节点向下拆分为2-节点*/
+        node.left.color = BLACK;
+        node.right.color = BLACK;
+    }
+
+
 
     // 返回以node为根节点的二分搜索树中，key所在的节点
     private Node getNode(Node node, K key) {

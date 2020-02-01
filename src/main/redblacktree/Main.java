@@ -14,7 +14,7 @@ public class Main {
                 "-prejudice.txt", words)) {
             System.out.println("Total words: " + words.size());
 
-            AVLTree<String, Integer> map = new AVLTree<String, Integer>();
+            RBTree<String, Integer> map = new RBTree<>();
             for (String word : words) {
                 if (map.contains(word)) {
                     map.set(word, map.get(word) + 1);
@@ -25,17 +25,6 @@ public class Main {
             System.out.println("Total different words: " + map.getSize());
             System.out.println("Frequency of PRIDE: " + map.get("pride"));
             System.out.println("Frequency of PREJUDICE: " + map.get("prejudice"));
-            System.out.println("is BST: " + map.isBST());
-            System.out.println("is balanced: " + map.isBalanced());
-
-            for(String word:words){
-                map.remove(word);
-                if(!map.isBST() || !map.isBalanced()){
-                    throw new RuntimeException("Error");
-                }
-            }
-
-            System.out.println("end");
         }
     }
 }
