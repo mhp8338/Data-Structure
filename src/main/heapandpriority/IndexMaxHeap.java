@@ -3,22 +3,19 @@ package heapandpriority;
 /**
  * @tag: DataStructure
  * @author: mhp
- * @createDate: 2020/1/13
- * @description: 大顶堆
- * - 必须是完全二叉树
- * - 一层比一层小
- * <p>
- * 利用数组存储堆
+ * @createDate: 2020/2/25
+ * @description:
  */
-public class MaxHeap<E extends Comparable<E>> {
+public class IndexMaxHeap<E extends Comparable<E>> {
     private Array<E> data;
-
-    public MaxHeap() {
+    private int[] indexes;
+    public IndexMaxHeap() {
         data = new Array<>();
     }
 
-    public MaxHeap(int capacity) {
+    public IndexMaxHeap(int capacity) {
         data = new Array<>(capacity);
+        indexes = new int[capacity];
     }
 
     /**
@@ -28,7 +25,7 @@ public class MaxHeap<E extends Comparable<E>> {
      *
      * @param arr 输入数组
      */
-    public MaxHeap(E[] arr) {
+    public IndexMaxHeap(E[] arr) {
         data = new Array<E>(arr);
         for (int i = parent(arr.length - 1); i >= 0; i--) {
             siftDown(i);
@@ -161,9 +158,4 @@ public class MaxHeap<E extends Comparable<E>> {
         siftDown(0);
         return ret;
     }
-
-
-    //TODO test
-
-
 }
